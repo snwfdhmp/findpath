@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -19,16 +18,13 @@ func Challenge(c Challenger, lvl Level) error {
 		return errors.New("path is nil")
 	}
 
-	pathString := make([]string, 0)
 	for i := range path.Pathway() {
-		moveString := fmt.Sprintf("[%d;%d]", path.Pathway()[i].X, path.Pathway()[i].Y)
-		fmt.Printf("Step %d: %s\n", i, moveString)
+		fmt.Printf("Step %d: %s\n", i, path.Pathway()[i].String())
 		lvl.Print(os.Stdout, &path.Pathway()[i])
-		time.Sleep(250 * time.Millisecond)
-		pathString = append(pathString, moveString)
+		time.Sleep(50 * time.Millisecond)
 	}
 
-	fmt.Printf("path: %s\n", strings.Join(pathString, "=>"))
+	fmt.Printf("path (length=%d): %s\n", len(path.Pathway()), path.String())
 
 	if err := ValidatePath(lvl, path); err != nil {
 		return fmt.Errorf("path validation error: %v", err)

@@ -1,9 +1,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/snwfdhmp/findpath"
+)
+
+var (
+	levelFile string
 )
 
 type challenger struct {
@@ -100,7 +105,9 @@ func (c *challenger) PossibleMoves(lvl findpath.Level, curMove *move) []*move {
 }
 
 func main() {
-	lvl, err := findpath.OpenLevel("testdata/map_2.txt")
+	flag.StringVar(&levelFile, "level", "testdata/map_4.txt", "level file to use")
+	flag.Parse()
+	lvl, err := findpath.OpenLevel(levelFile)
 	if err != nil {
 		fmt.Printf("fatal: %s\n", err)
 		return

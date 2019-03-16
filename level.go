@@ -15,6 +15,8 @@ var (
 
 type Level interface {
 	Cell(x, y int) int
+	SizeX() int
+	SizeY() int
 	Goal() Pos
 	Start() Pos
 	Print(w io.Writer, playerPos *Pos)
@@ -27,18 +29,20 @@ type level struct {
 }
 
 func (l *level) Print(w io.Writer, playerPos *Pos) {
-	for i := range (*l).cells {
-		for j := range l.cells[i] {
+	output := ""
+	for i := 0; i < len((*l).cells); i++ {
+		for j := 0; j < len(l.cells[i]); j++ {
 			if playerPos != nil && playerPos.Y == i && playerPos.X == j {
-				io.WriteString(w, "P")
+				output += "P"
 				continue
 			}
-			io.WriteString(w, fmt.Sprintf("%s", cellTypeChar(l.cells[i][j])))
+			output += CellTypeChar(l.cells[i][j])
 		}
 		if len(l.cells[i]) > 1 {
-			io.WriteString(w, "\n")
+			output += "\n"
 		}
 	}
+	io.WriteString(w, output)
 }
 
 func (l *level) Cell(x, y int) int {
@@ -58,6 +62,14 @@ func (l *level) Goal() Pos {
 
 func (l *level) Start() Pos {
 	return l.start
+}
+
+func (l *level) SizeX() int {
+	return len(l.cells[0])
+}
+
+func (l *level) SizeY() int {
+	return len(l.cells)
 }
 
 func OpenLevel(filepath string) (Level, error) {
@@ -114,6 +126,32 @@ func OpenLevel(filepath string) (Level, error) {
 	}, nil
 }
 
+func NewLevel(board [][]int) (Level, error) {
+	start := new(Pos)
+	goal := new(Pos)
+	for y := range board {
+		for x := range board[y] {
+			if board[y][x] == CellTypeStart {
+				*start = NewPos(x, y)
+			} else if board[y][x] == CellTypeGoal {
+				*goal = NewPos(x, y)
+			}
+		}
+	}
+
+	if goal == nil {
+		return nil, errors.New("error level content: missing goal")
+	} else if start == nil {
+		return nil, errors.New("error level content: missing start")
+	}
+
+	return &level{
+		goal:  *goal,
+		start: *start,
+		cells: board,
+	}, nil
+}
+
 type Pos struct {
 	X int
 	Y int
@@ -134,7 +172,7 @@ const (
 	CellTypeEmpty = 3
 )
 
-func cellTypeChar(cellType int) string {
+func CellTypeChar(cellType int) string {
 	switch cellType {
 	case CellTypeGoal:
 		return "G"
