@@ -49,7 +49,7 @@ func (c *challenger) FindPath(lvl findpath.Level) findpath.Path {
 	fmt.Printf("Searching...\n")
 Walk:
 	for cur := 0; cur < len(moves); cur++ {
-		fmt.Printf("- %s\n", moves[cur].targetPos.String())
+		// fmt.Printf("- %s\n", moves[cur].targetPos.String())
 		newMoves := c.PossibleMoves(lvl, moves[cur])
 		for _, move := range newMoves {
 			if c.isCrossed(move.targetPos) {
@@ -65,10 +65,15 @@ Walk:
 		}
 	}
 
+	if moves[len(moves)-1].targetPos != lvl.Start() {
+		fmt.Printf("Not found\n")
+		return nil
+	}
+
 	path := findpath.NewPath()
 	fmt.Printf("Rewinding...\n")
 	for move := moves[len(moves)-1]; move != nil; move = move.previousMove {
-		fmt.Printf("pos: %s\n", move.targetPos.String())
+		// fmt.Printf("pos: %s\n", move.targetPos.String())
 		path.Add(move.targetPos)
 	}
 
@@ -95,7 +100,7 @@ func (c *challenger) PossibleMoves(lvl findpath.Level, curMove *move) []*move {
 }
 
 func main() {
-	lvl, err := findpath.OpenLevel("testdata/map_1.txt")
+	lvl, err := findpath.OpenLevel("testdata/map_2.txt")
 	if err != nil {
 		fmt.Printf("fatal: %s\n", err)
 		return

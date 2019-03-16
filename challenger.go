@@ -24,7 +24,7 @@ func Challenge(c Challenger, lvl Level) error {
 		moveString := fmt.Sprintf("[%d;%d]", path.Pathway()[i].X, path.Pathway()[i].Y)
 		fmt.Printf("Step %d: %s\n", i, moveString)
 		lvl.Print(os.Stdout, &path.Pathway()[i])
-		time.Sleep(1 * time.Second)
+		time.Sleep(250 * time.Millisecond)
 		pathString = append(pathString, moveString)
 	}
 
