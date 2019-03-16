@@ -2,7 +2,7 @@
 
 ## Usage
 
-Test with
+Install with `go get`, and check out the `./examples` folder.
 
 ```sh
 go get github.com/snwfdhmp/findpath
